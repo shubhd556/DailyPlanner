@@ -1,0 +1,266 @@
+/* -----------------------------
+   THEME VARIABLES
+   ----------------------------- */
+
+/* Default = DARK theme (unchanged) */
+:root,
+[data-theme='dark'] {
+  --bg: #0b1020;
+  --panel: #121a33;
+  --text: #e6e8ef;
+  --muted: #9aa4c7;
+
+  --primary: #5b8cff;
+  --primary-600: #3f6fe0;
+
+  /* Surfaces / chrome */
+  --border: rgba(255, 255, 255, 0.12);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --chip: rgba(255, 255, 255, 0.04);
+  --chip-border: rgba(255, 255, 255, 0.14);
+  --hover: rgba(255, 255, 255, 0.06);
+  --hover-strong: rgba(255, 255, 255, 0.12);
+
+  /* Status hues */
+  --danger: #ff6b6b;
+  --low: #7bd389;
+  --med: #ffd166;
+  --high: #ff6b6b;
+}
+
+/* LIGHT theme = PURE WHITE surfaces, near-black text, black primary */
+[data-theme='light'] {
+  --bg: #ffffff;        /* page background */
+  --panel: #ffffff;     /* panels/cards */
+  --text: #0a0a0a;      /* main text (almost black) */
+  --muted: #4c4c4c;     /* muted body text */
+
+  --primary: #111111;   /* black buttons/links */
+  --primary-600: #000000;
+
+  --border: rgba(0, 0, 0, 0.12);
+  --nav-border: rgba(0, 0, 0, 0.10);
+  --chip: rgba(0, 0, 0, 0.04);
+  --chip-border: rgba(0, 0, 0, 0.12);
+  --hover: rgba(0, 0, 0, 0.06);
+  --hover-strong: rgba(0, 0, 0, 0.12);
+
+  --danger: #c1121f;  /* slightly deeper red for light */
+  --low: #157347;
+  --med: #b45309;
+  --high: #b91c1c;
+}
+
+/* -----------------------------
+   BASE STYLES
+   ----------------------------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    Cantarell, Noto Sans, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+  background: var(--bg);
+  color: var(--text);
+  /* Keep the subtle gradient only for dark; pure white on light looks better */
+  background-image: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0));
+}
+[data-theme='dark'] body {
+  background-image: linear-gradient(180deg, var(--bg), #0f1630);
+}
+
+/* -----------------------------
+   NAV / LAYOUT
+   ----------------------------- */
+nav {
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(8px);
+  background: color-mix(in oklab, var(--bg) 70%, transparent);
+  border-bottom: 1px solid var(--nav-border);
+  z-index: 50;
+}
+.nav-wrap { max-width: 960px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 16px; }
+.brand { font-weight: 700; letter-spacing: 0.2px; color: var(--text); text-decoration: none; }
+.spacer { flex: 1 1 auto; }
+.links { display: flex; gap: 10px; }
+.link { color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 8px; }
+.link:hover { color: var(--text); background: var(--hover); }
+.active { color: var(--text); background: color-mix(in oklab, var(--primary) 20%, transparent); }
+.theme-btn { margin-left: 4px; }
+
+.container { max-width: 1000px; margin: 32px auto; padding: 0 16px; }
+h1 { font-size: 2rem; margin: 0 0 12px 0; }
+p { color: var(--muted); line-height: 1.6; }
+code { background: var(--chip); padding: 2px 6px; border-radius: 6px; }
+
+/* -----------------------------
+   FORM ELEMENTS / TOOLBAR
+   ----------------------------- */
+.planner-bar {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px;
+}
+.date, .search, .select, .input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--chip);
+  color: var(--text);
+}
+.input::placeholder { color: color-mix(in srgb, var(--muted) 70%, transparent); }
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--primary);
+  color: #ffffff;
+  cursor: pointer;
+}
+.btn:hover { background: var(--primary-600); }
+
+.linkish { background: transparent; border: none; color: var(--muted); cursor: pointer; }
+.linkish:hover { color: var(--text); }
+
+/* -----------------------------
+   LIST / CARDS
+   ----------------------------- */
+.list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.item {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+.row { display: flex; align-items: center; gap: 10px; }
+
+.txt { color: var(--text); }
+.txt.done { color: color-mix(in srgb, var(--text) 55%, transparent); text-decoration: line-through; }
+
+.meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--chip-border); background: var(--chip); color: var(--muted); }
+.prio-low  { border-color: color-mix(in srgb, var(--low) 70%, transparent);  color: color-mix(in srgb, var(--low) 80%, white 20%); }
+.prio-med  { border-color: color-mix(in srgb, var(--med) 70%, transparent);  color: color-mix(in srgb, var(--med) 80%, white 20%); }
+.prio-high { border-color: color-mix(in srgb, var(--high) 70%, transparent); color: color-mix(in srgb, var(--high) 80%, white 20%); }
+.time { color: color-mix(in srgb, var(--primary) 65%, var(--text) 35%); }
+
+.icon {
+  width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border);
+  cursor: pointer; background: var(--chip); color: var(--text); font-size: 18px; line-height: 1;
+}
+.icon:hover { background: var(--hover); }
+.danger { color: var(--danger); }
+
+.muted { color: var(--muted); }
+.empty {
+  text-align: center; color: var(--muted);
+  padding: 16px; border-radius: 12px; border: 1px dashed var(--border);
+  background: var(--panel);
+}
+
+/* -----------------------------
+   CONFETTI CANVAS
+   ----------------------------- */
+   .confetti-canvas {
+    position: fixed;       /* fixed so it covers viewport even if page scrolls */
+    top: 0;
+    left: 0;
+    width: 100vw;          /* full viewport width */
+    height: 100vh;         /* full viewport height */
+    pointer-events: none;  /* so clicks pass through */
+    z-index: 100;
+  }
+/* -----------------------------
+   RESPONSIVE
+   ----------------------------- */
+@media (max-width: 760px) {
+  .task-form { display: grid; grid-template-columns: 1fr 90px 110px 1fr auto; gap: 8px; margin: 12px 0 16px; }
+  .notes { grid-column: 1 / -1; }
+  .add-btn { grid-column: 1 / -1; }
+}
+
+/* Chatbot UI */
+.chatbot-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--primary);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 120;
+}
+.chatbot-fab:hover { filter: brightness(0.95); }
+
+.chatbot-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: min(380px, 90vw);
+  height: min(520px, 75vh);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 120;
+}
+.chatbot-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.chatbot-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+}
+.chatbot-messages {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+.msg {
+  max-width: 90%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--chip);
+  border: 1px solid var(--chip-border);
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+.msg.assistant { align-self: start; }
+.msg.user {
+  align-self: end;
+  background: color-mix(in oklab, var(--primary) 18%, var(--chip));
+  border-color: color-mix(in oklab, var(--primary) 25%, var(--chip-border));
+  color: var(--text);
+}
+
+.chatbot-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+}
+.chatbot-input input {
+  flex: 1 1 auto;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--chip);
+  color: var(--text);
+}
