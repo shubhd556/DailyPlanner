@@ -12,7 +12,7 @@ export default function AboutPage() {
       </p>
       <p>
         Data is stored locally in your browser (<code>localStorage</code>) so no backend is required.
-        Feel free to extend it with API routes and a database.
+        
       </p>
     </section>
   )
