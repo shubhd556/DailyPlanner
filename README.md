@@ -1,32 +1,71 @@
-Daily Planner – Next.js (App Router)
-A minimal Next.js front‑end with two routes (/, /about) that evolves into a Daily Task Planner with:
+# Daily Planner – Next.js (App Router) + Gemini Chatbot
 
-<img width="910" height="437" alt="image" src="https://github.com/user-attachments/assets/d4f04274-38ff-4a18-ba42-853012caa01b" />
+A minimal **Next.js** app with two routes (`/`, `/about`) that evolves into a powerful **Daily Task Planner**:
 
-✅ Per‑day tasks (date picker) saved in localStorage
-✍️ Add title, time, priority (low/med/high), tags, notes
-🔎 Filters (status, priority, tag, search)
-🔀 Reorder (Up/Down), Clear done, Carry forward unfinished tasks
-🌗 Dark/Light theme toggle (pure white light theme)
-🎉 Full‑screen, dynamic confetti when completing a task
-🤖 Built‑in chatbot that:
+<img width="910" height="437" alt="image" src="https://github.com/user-attachments/assets/cfa6bc02-755b-40a8-9e04-c0af20c380b7" />
 
-Understands commands (add/done/delete/list/switch/clear/carry)
-Talks naturally and uses Gemini API to create/update/delete/complete tasks via a structured tool‑call JSON (local execution)
+- ✅ Per‑day tasks (date picker) saved in **localStorage**
+- ✍️ Add **title**, **time**, **priority** (low/med/high), **tags**, **notes**
+- 🔎 Filters (status, priority, tag, search)
+- 🔀 Reorder (Up/Down), **Clear done**, **Carry forward** unfinished tasks
+- 🌗 **Dark/Light** theme toggle (pure white light theme)
+- 🎉 **Full‑screen, dynamic confetti** when completing a task
+- 🤖 **Built‑in chatbot** that:
+  - Understands **commands** (add/done/delete/list/switch/clear/carry)
+  - Chats naturally and uses **Gemini API** to **create/update/delete/complete** tasks via a structured tool‑call JSON (executed locally)
 
+Deploy‑ready on **Vercel**.
 
-🚀 Deploy‑ready on Vercel
+---
 
+## ✨ Demo Features
 
-⚙️ Tech
+**Planner**
+- Per‑day lists via date picker
+- Add tasks with time, priority, tags and notes
+- Filter by status/priority/tag/search
+- Reorder (↑/↓), Clear done, Carry forward (moves active tasks to tomorrow)
+- Confetti when marking a task as done
 
-Next.js App Router (/app dir), React 18
-Client‑side state + localStorage (no DB required)
-Edge API route to Google Gemini (/api/ai)
-Zero third‑party UI libraries
+**Chatbot**
+- Deterministic commands (run locally, no API):
+  ```
+  add <text> [time HH:MM] [priority low|med|high] [tags a,b,c] [notes ...]
+  done <text>
+  delete <text>
+  list | what's left | show done
+  clear done | carry forward
+  switch <YYYY-MM-DD> | today | tomorrow
+  help
+  ```
+- Natural conversation with **Gemini**:
+  - “Add 30‑min code review at 17:30, high priority, tags dsa,coding”
+  - “Change code review to 18:00 and priority medium”
+  - “Delete code review”
+  - “Switch to 2025‑09‑29 and add Morning run at 07:00”
+- The chatbot asks Gemini to optionally return a **tool‑call JSON** (see schema below).  
+  The app parses it and updates your tasks locally.
 
+**Theme**
+- Dark (default) and pure‑white Light
+- Toggle in navbar (persists in localStorage)
+- Pre‑hydration script prevents theme flash
 
-📦 Project Structure
+---
+
+## 🧱 Tech Stack
+
+- **Next.js 14 (App Router)** + React 18
+- **Edge** API route for **Gemini** (`/api/ai`)
+- Client state + **localStorage** (no DB required)
+- Vanilla CSS (no UI framework)
+- Canvas‑based **confetti** (no extra deps)
+
+---
+
+## 📁 Project Structure
+
+```
 .
 ├── app
 │   ├── about
@@ -34,170 +73,190 @@ Zero third‑party UI libraries
 │   ├── api
 │   │   └── ai
 │   │       └── route.js     # Gemini-only AI endpoint (Edge runtime)
-│   ├── globals.css          # Dark/Light theme + planner/chat styles
-│   ├── layout.js            # global layout + theme init Script
+│   ├── globals.css          # Theme + planner + chatbot + confetti styles
+│   ├── layout.js            # Root layout + theme init Script
 │   └── page.js              # / – Daily Planner (tasks + confetti + chatbot mount)
 ├── components
-│   ├── Chatbot.js           # Chat UI + rule commands + Gemini tool-calling
+│   ├── Chatbot.js           # Chat UI + commands + Gemini tool-calling
 │   ├── Nav.js               # Top navigation
-│   └── ThemeToggle.js       # Dark/Light toggle (localStorage + system default)
+│   └── ThemeToggle.js       # Dark/Light toggle
 ├── public/                  # static assets (optional)
 ├── package.json
 ├── next.config.mjs
 └── README.md
+```
+
+---
+
+## 🚀 Getting Started (Local)
+
+### Prerequisites
+- **Node.js 18+** (recommended LTS)
+
+### 1) Install
+```bash
+npm install
+```
+
+### 2) Environment Variables
+Create **`.env.local`** in the project root:
+
+```bash
+# .env.local
+GEMINI_API_KEY=your_real_key_here
+# Optional (default: models/gemini-2.5-flash)
+GEMINI_MODEL=models/gemini-2.5-flash
+```
+
+> Keep secrets **server-side only**. Do **not** prefix with `NEXT_PUBLIC_`.
+
+### 3) Run
+```bash
+npm run dev
+# open http://localhost:3000
+```
+
+### 4) (Optional) Test the AI route
+```bash
+curl -s http://localhost:3000/api/ai   -H "Content-Type: application/json"   -d '{"messages":[{"role":"user","content":"Suggest a 2-hour focus plan after lunch."}]}'
+```
+
+---
+
+## 🧭 Usage Guide
+
+### Planner
+- Pick a date → add tasks (title/time/priority/tags/notes)
+- Filter by status/priority/tag/search
+- Reorder with ↑/↓
+- **Clear done** removes completed tasks
+- **Carry forward** moves active tasks to tomorrow
+- Completing a task triggers **confetti** 🎉
+
+### Chatbot
+- Click the **💬** bubble (bottom-right) to open
+- Use **commands** (see list above) or talk naturally
+- When you ask for changes in natural language, Gemini may return a tool‑call JSON which the app executes locally
+
+---
 
+## 🤖 Gemini API – How It’s Used
+
+### Client → Server
+The chatbot sends:
+- Your latest prompt
+- A short **task summary** (current date)
+- A **Tool Spec** describing the expected JSON for task actions
+
+### Server: `app/api/ai/route.js` (Edge)
+- Calls Gemini **`generateContent`** using `GEMINI_API_KEY`
+- Returns top candidate text as `{ text }`
 
-🚀 Quickstart (Local)
+### Client Tool‑Call Schema (expected from Gemini)
+The model is asked to return a **single JSON object** (in a ```json fenced block) when an action is needed:
 
-Install
+```json
+{
+  "action": "create | update | delete | complete | uncomplete | switch_date",
+  "task": {
+    "text": "string",
+    "time": "HH:MM",
+    "priority": "low|med|high",
+    "tags": ["t1","t2"],
+    "notes": "string",
+    "done": false
+  },
+  "match": { "text": "string" },
+  "changes": { "text": "string", "time": "HH:MM", "priority": "low|med|high", "tags": ["t"], "notes": "string", "done": true },
+  "date": "YYYY-MM-DD",
+  "message": "Short confirmation"
+}
+```
 
-Shellnpm installShow more lines
+> If no change is needed, the model replies in plain text **without** JSON.
 
-Environment variables
-Create .env.local in the project root (this file is git‑ignored):
+### Execution
+- The client extracts JSON (if any) and **applies the action** to local state:
+  - `create` → add task
+  - `update` → modify fields of matching task
+  - `delete` → remove task
+  - `complete`/`uncomplete` → toggle `done`
+  - `switch_date` → change current date
+- A short confirmation message is shown, optionally followed by the model’s natural reply.
 
-Shell# .env.localGEMINI_API_KEY=your_real_key_here# Optional model override (defaults to models/gemini-2.5-flash)GEMINI_MODEL=models/gemini-2.5-flashShow more lines
+---
 
-Never expose your key on the client. Keep it server-side only (no NEXT_PUBLIC_).
+## 🎨 Theme
 
+- **Dark** (default) uses your original palette
+- **Light** is **pure white** surfaces + near‑black text + black primary
+- Toggle stored in localStorage; first load follows **system** preference
+- Pre‑hydration script in `layout.js` avoids theme flashing
 
-Run
+---
 
-Shellnpm run dev# open http://localhost:3000Show more lines
+## 🎉 Confetti
 
-Test the AI route
+- Full‑screen overlay canvas:
+  ```css
+  .confetti-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 100;
+  }
+  ```
+- Canvas size adjusts on resize and scales for `devicePixelRatio` for crispness
 
-Shellcurl -s http://localhost:3000/api/ai \  -H "Content-Type: application/json" \  -d '{"messages":[{"role":"user","content":"Suggest a 2-hour plan after lunch"}]}'Show more lines
+---
 
-🧭 Usage
-Daily Planner (Home /)
+## 🔐 Security
 
-Use the date picker to select any day.
-Add tasks with time, priority, tags and notes.
-Filter by status, priority, tag, or free‑text search.
-Reorder using ↑/↓.
-Clear done removes completed tasks.
-Carry forward moves all unfinished tasks to tomorrow.
-Completing a task triggers full‑screen confetti 🎉.
+- Keep **GEMINI_API_KEY** **out of client code**
+- Store secrets in `.env.local` (local) and **Vercel → Project → Settings → Environment Variables** (prod)
+- The browser only talks to `/api/ai` (your server route), never directly to Google APIs
 
-Theme
+---
 
-Navbar → 🌞 Light / 🌙 Dark toggle.
-First load uses system preference; your choice is saved.
+## ☁️ Deploy to Vercel
 
-Chatbot (bottom‑right chat bubble 💬)
+1) Push code to GitHub/GitLab/Bitbucket  
+2) In **Vercel → Project → Settings → Environment Variables**:
+   - `GEMINI_API_KEY = <your_key>`
+   - (optional) `GEMINI_MODEL = models/gemini-2.5-flash`
+3) **Deploy** (Vercel auto-detects Next.js: `next build`, output `.next`)
 
+---
 
-Click to open/close.
+## 🧩 Customization
 
+- **Model**: swap via `GEMINI_MODEL`
+- **Tool‑calls**: extend the schema for multi‑action batches
+- **Persistence**: replace localStorage with a DB + API routes
+- **Streaming**: upgrade `/api/ai` to stream tokens for live typing
+- **UI**: integrate Tailwind/MUI if desired (no changes required in logic)
 
-It supports:
+---
 
-Deterministic commands (no AI needed):
+## 🐛 Troubleshooting
 
-add <text> [time HH:MM] [priority low|med|high] [tags a,b,c] [notes ...]
-done <text>
-delete <text>
-list · what's left · show done
-clear done · carry forward
-switch <YYYY-MM-DD> · today · tomorrow
-help
+- **“Missing GEMINI_API_KEY”** → add it to `.env.local` and restart `npm run dev`
+- **Model error / 404** → use a valid model (e.g., `models/gemini-2.5-flash`)
+- **No confetti** → ensure the canvas is present:
+  ```jsx
+  <canvas ref={canvasRef} className="confetti-canvas" aria-hidden="true" />
+  ```
+- **Theme flash** → ensure the theme init `<Script>` exists in `layout.js`
 
+---
 
-Natural chat with Gemini:
+## 📜 License
 
-e.g., “Add 30‑min DSA at 6:00 pm, high priority, tags array,stack”
-e.g., “Change DSA to 6:30 pm and set priority medium”
-e.g., “Delete DSA”
-e.g., “Switch to 2025‑09‑29 and add Morning run at 07:00”
+Choose a license (e.g., MIT) and add it here if you plan to share/distribute.
 
+---
 
+## 🙌 Credits
 
-The bot asks Gemini to optionally return a tool‑call JSON like:
-JSON{  "action": "update",  "match": { "text": "DSA" },  "changes": { "time": "18:30", "priority": "med" },  "message": "Updated DSA to 18:30, priority medium."Show more lines
-The app parses & executes this locally (no server DB), then shows a short confirmation and the AI’s natural reply.
-
-
-
-🧠 How the AI Integration Works
-
-The client chatbot sends your prompt, a brief summary of current tasks, and a tool spec to /api/ai.
-The Edge API route (app/api/ai/route.js) calls Gemini’s generateContent endpoint using GEMINI_API_KEY and returns the top candidate text.
-The chatbot tries to extract a JSON tool‑call (from a ```json fenced block or inline), validates it, and applies the requested change:
-
-create, update, delete, complete, uncomplete, or switch_date.
-
-
-If no JSON is present, it simply prints Gemini’s natural language answer.
-
-
-All state updates are local (in browser memory + localStorage). You can later swap in a real database + API.
-
-
-🎨 Theming Details
-
-Dark (default) uses variables like --bg, --text, etc.
-Light is pure white surfaces with near‑black text and black primary accents:
-CSS[data-theme='light'] {  --bg: #ffffff;  --panel: #ffffff;  --text: #0a0a0a;  --muted: #4c4c4c;  --primary: #111111;  --primary-600: #000000;  /* borders/hover derived from black/gray for crisp light-mode look */}Show more lines
-
-The toggle writes the theme to localStorage and sets data-theme on <html>.
-
-
-🎉 Confetti
-
-Full‑screen overlay canvas:
-CSS.confetti-canvas {  position: fixed; top: 0; left: 0;  width: 100vw; height: 100vh;  pointer-events: none; z-index: 100;}Show more lines
-
-JS uses a resize effect to match the viewport and scale for devicePixelRatio for crispness.
-Confetti launches on complete and can be triggered from the chatbot when it marks tasks done.
-
-
-🔐 Security Notes
-
-Your GEMINI_API_KEY must live only in server environment (e.g., .env.local, Vercel env).
-Never expose it in client code / NEXT_PUBLIC_ variables.
-The /api/ai route is the only place that talks to Gemini.
-
-
-🐛 Troubleshooting
-
-“Missing GEMINI_API_KEY”
-Create .env.local, add the key, restart npm run dev.
-Gemini error or model not found
-Use a valid model (e.g., models/gemini-2.5-flash) or set GEMINI_MODEL.
-No confetti / canvas not covering screen
-Ensure the CSS block above exists and the canvas is mounted:
-JSX<canvas ref={canvasRef} className="confetti-canvas" aria-hidden="true" />Show more lines
-
-Theme flashing on load
-Ensure app/layout.js includes the pre‑hydration <Script id="theme-init" strategy="beforeInteractive"> that sets data-theme from localStorage or system preference.
-
-
-☁️ Deploy on Vercel
-
-Push to GitHub/GitLab/Bitbucket.
-In Vercel → Project → Settings → Environment Variables:
-
-GEMINI_API_KEY = <your_key>
-(optional) GEMINI_MODEL = models/gemini-2.5-flash
-
-
-Deploy (Vercel auto-detects Next.js: build next build, output .next).
-
-
-🛠️ Customize
-
-Models: switch GEMINI_MODEL in env without code changes.
-Tool-calls: extend the JSON schema (e.g., support multiple actions in one response).
-Persistence: replace localStorage with a DB and swap updateTasks/addTaskFromFields to call your API routes.
-Streaming: upgrade /api/ai to stream tokens via ReadableStream for live typing.
-
-
-📝 License
-Use it freely for personal or internal projects. Add your preferred license (e.g., MIT) if you plan to share/distribute.
-
-🙌 Credits
-
-Built with Next.js App Router, React 18.
-Confetti written with HTML Canvas (no deps).
-Chatbot combines deterministic commands and Gemini for natural language and structured tool‑calls.
+- Built with **Next.js App Router** & React 18  
+- Confetti with HTML Canvas  
+- Chatbot blends deterministic commands with **Gemini**-powered natural language + tool‑calls
